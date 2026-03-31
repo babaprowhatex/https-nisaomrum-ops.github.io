@@ -4,251 +4,177 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Müzik</title>
+
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{
+body {
+  margin:0;
   overflow:hidden;
-  font-family:Arial,Helvetica,sans-serif;
-  color:#fff;
+  font-family: Arial;
 }
-.bg{
+
+/* ARKA PLAN */
+.bg {
   position:fixed;
-  inset:0;
   width:100%;
   height:100%;
   object-fit:cover;
-  filter:brightness(.82);
-  z-index:-3;
+  z-index:-1;
 }
-.overlay{
-  position:fixed;
-  inset:0;
-  z-index:-2;
-  background:
-    radial-gradient(circle at top left, rgba(255,170,215,.12), transparent 25%),
-    linear-gradient(rgba(0,0,0,.02), rgba(0,0,0,.06));
-  backdrop-filter: blur(1px);
-  -webkit-backdrop-filter: blur(1px);
-}
-.player{
+
+/* PLAYER (FULL ŞEFFAF) */
+.player {
   position:absolute;
   top:50%;
   left:50%;
   transform:translate(-50%,-50%);
-  width:min(92vw,390px);
-  padding:26px 22px 18px;
-  border-radius:30px;
+  padding:20px;
+  border-radius:25px;
   text-align:center;
-  background:rgba(255,255,255,.02); /* full seffafa yakin */
-  border:1px solid rgba(255,255,255,.10);
-  box-shadow:
-    0 8px 28px rgba(0,0,0,.10),
-    inset 0 1px 0 rgba(255,255,255,.08);
-  backdrop-filter: blur(32px);
-  -webkit-backdrop-filter: blur(32px);
+  background:rgba(0,0,0,0); /* TAM ŞEFFAF */
 }
-.player::before{
-  content:"";
-  position:absolute;
-  inset:0;
-  border-radius:30px;
-  background:linear-gradient(135deg, rgba(255,255,255,.10), rgba(255,255,255,.01));
-  pointer-events:none;
-}
-.cover{
-  width:190px;
-  height:190px;
+
+/* FOTO */
+.cover {
+  width:140px;
+  height:140px;
+  border-radius:20px;
   object-fit:cover;
-  border-radius:24px;
-  border:1px solid rgba(255,255,255,.14);
-  box-shadow:0 8px 20px rgba(255,95,174,.10);
-  position:relative;
-  z-index:1;
 }
-h2{
-  margin:14px 0 14px;
-  font-size:22px;
-  position:relative;
-  z-index:1;
-}
-.controls{
-  display:flex;
-  justify-content:center;
-  gap:12px;
-  margin-bottom:14px;
-  position:relative;
-  z-index:1;
-}
-.btn{
-  width:52px;
-  height:52px;
+
+/* BUTONLAR */
+button {
+  margin:10px;
+  padding:12px;
   border:none;
-  border-radius:16px;
-  cursor:pointer;
-  display:grid;
-  place-items:center;
-  background:linear-gradient(180deg,#ff8bc7,#ff5fae);
-  box-shadow:0 6px 16px rgba(255,95,174,.22);
-}
-.btn svg{width:21px;height:21px;fill:#fff}
-.progress-area,
-.volume-area{
-  display:grid;
-  align-items:center;
-  gap:10px;
-  margin-top:10px;
-  font-size:13px;
-  position:relative;
-  z-index:1;
-}
-.progress-area{grid-template-columns:44px 1fr 44px;}
-.volume-area{grid-template-columns:24px 1fr 44px;}
-#progressBar,#volumeBar{
-  width:100%;
-  accent-color:#ff5fae;
+  border-radius:50%;
+  background:linear-gradient(45deg,#ff4da6,#ff80bf);
+  color:white;
+  font-size:16px;
   cursor:pointer;
 }
-.note{
-  margin-top:12px;
-  font-size:12px;
-  opacity:.92;
-  position:relative;
-  z-index:1;
+
+/* BAR */
+input[type=range] {
+  width:200px;
 }
-img{user-select:none;-webkit-user-drag:none}
-.heart{
+
+/* MOBİL KÜÇÜLTME */
+@media (max-width:600px){
+  .cover{width:110px;height:110px;}
+  input[type=range]{width:150px;}
+}
+
+/* KALPLER */
+.heart {
   position:fixed;
-  top:-20px;
   color:pink;
-  animation:fall linear;
-  pointer-events:none;
-  z-index:10;
+  animation:fall linear infinite;
 }
-@keyframes fall{
-  to{transform:translateY(110vh);opacity:0}
+@keyframes fall {
+  from { transform:translateY(-10px); }
+  to { transform:translateY(100vh); }
 }
 </style>
 </head>
+
 <body>
 
-<img src="foto.jpg" class="bg" alt="">
-<div class="overlay"></div>
+<img src="foto.jpg" class="bg">
 
 <div class="player">
-  <img id="cover" class="cover" src="cover1.jpg" alt="">
-  <h2 id="name">Başa Sar</h2>
+  <img src="cover.jpg" class="cover">
 
-  <div class="controls">
-    <button class="btn" id="playBtn" aria-label="Oynat">
-      <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-    </button>
-    <button class="btn" id="pauseBtn" aria-label="Durdur">
-      <svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zm8 0h4v14h-4z"/></svg>
-    </button>
-    <button class="btn" id="nextBtn" aria-label="Sonraki">
-      <svg viewBox="0 0 24 24"><path d="M6 5v14l8-7V5zm8 0h4v14h-4z"/></svg>
-    </button>
+  <h2 id="title">Şarkı 1</h2>
+
+  <div>
+    <button onclick="prev()">⏮</button>
+    <button onclick="play()">▶</button>
+    <button onclick="pause()">⏸</button>
+    <button onclick="next()">⏭</button>
   </div>
 
-  <div class="progress-area">
-    <span id="cur">0:00</span>
-    <input type="range" id="progressBar" value="0" min="0" max="100">
-    <span id="dur">0:00</span>
+  <div>
+    <span id="current">0:00</span>
+    <input type="range" id="progress" value="0">
+    <span id="duration">0:00</span>
   </div>
 
-  <div class="volume-area">
-    <span>🔊</span>
-    <input type="range" id="volumeBar" value="100" min="0" max="100">
-    <span id="volText">100</span>
+  <div>
+    🔊 <input type="range" id="volume" min="0" max="1" step="0.01" value="1">
   </div>
-
-  <div class="note">Play’e basınca şarkı başlar.</div>
 </div>
 
 <audio id="audio"></audio>
 
 <script>
 const songs = [
-  {name:"Başa Sar", file:"./sarki1.mp3", cover:"./cover1.jpg"},
-  {name:"Küçük Bir Yol", file:"./sarki2.mp3", cover:"./cover2.jpg"}
+  {name:"Şarkı 1", file:"sarki1.mp3"},
+  {name:"Şarkı 2", file:"sarki2.mp3"},
+  {name:"Şarkı 3", file:"sarki3.mp3"}
 ];
 
-let i = 0;
-const a = document.getElementById("audio");
-const nameEl = document.getElementById("name");
-const coverEl = document.getElementById("cover");
-const curEl = document.getElementById("cur");
-const durEl = document.getElementById("dur");
-const barEl = document.getElementById("progressBar");
-const volEl = document.getElementById("volumeBar");
-const volTextEl = document.getElementById("volText");
+let index = 0;
+const audio = document.getElementById("audio");
 
 function load(){
-  a.src = songs[i].file;
-  nameEl.textContent = songs[i].name;
-  coverEl.src = songs[i].cover;
-  barEl.value = 0;
-  curEl.textContent = "0:00";
+  audio.src = songs[index].file;
+  document.getElementById("title").innerText = songs[index].name;
 }
-
-function play(){ a.play(); }
-function pause(){ a.pause(); }
-function next(){
-  i = (i + 1) % songs.length;
-  load();
-  a.play();
-}
-
-function format(t){
-  if(!t || isNaN(t)) return "0:00";
-  const m = Math.floor(t/60);
-  let s = Math.floor(t%60);
-  if(s < 10) s = "0" + s;
-  return m + ":" + s;
-}
-
-a.addEventListener("loadedmetadata", ()=>{
-  durEl.textContent = format(a.duration);
-});
-
-a.addEventListener("timeupdate", ()=>{
-  if(!isNaN(a.duration) && a.duration > 0){
-    barEl.value = (a.currentTime / a.duration) * 100;
-  }
-  curEl.textContent = format(a.currentTime);
-  durEl.textContent = format(a.duration);
-});
-
-barEl.addEventListener("input", ()=>{
-  if(!isNaN(a.duration) && a.duration > 0){
-    a.currentTime = (barEl.value / 100) * a.duration;
-  }
-});
-
-volEl.addEventListener("input", ()=>{
-  a.volume = volEl.value / 100;
-  volTextEl.textContent = volEl.value;
-});
-
-a.addEventListener("ended", next);
-
-document.getElementById("playBtn").addEventListener("click", play);
-document.getElementById("pauseBtn").addEventListener("click", pause);
-document.getElementById("nextBtn").addEventListener("click", next);
-
-setInterval(()=>{
-  const h = document.createElement("div");
-  h.className = "heart";
-  h.textContent = "💖";
-  h.style.left = Math.random() * 100 + "vw";
-  h.style.animationDuration = (Math.random() * 3 + 2) + "s";
-  h.style.fontSize = (Math.random() * 10 + 16) + "px";
-  document.body.appendChild(h);
-  setTimeout(()=>h.remove(), 4500);
-}, 220);
-
 load();
-a.volume = 1;
+
+function play(){ audio.play(); }
+function pause(){ audio.pause(); }
+
+function next(){
+  index = (index+1)%songs.length;
+  load(); play();
+}
+
+function prev(){
+  index = (index-1+ songs.length)%songs.length;
+  load(); play();
+}
+
+/* İLERLEME */
+audio.addEventListener("timeupdate", ()=>{
+  const progress = document.getElementById("progress");
+  progress.value = (audio.currentTime/audio.duration)*100 || 0;
+
+  document.getElementById("current").innerText =
+    format(audio.currentTime);
+
+  document.getElementById("duration").innerText =
+    format(audio.duration);
+});
+
+document.getElementById("progress").oninput = function(){
+  audio.currentTime = (this.value/100)*audio.duration;
+};
+
+/* SES */
+document.getElementById("volume").oninput = function(){
+  audio.volume = this.value;
+};
+
+/* SÜRE FORMAT */
+function format(s){
+  if(!s) return "0:00";
+  let m = Math.floor(s/60);
+  let sec = Math.floor(s%60);
+  return m+":"+(sec<10?"0":"")+sec;
+}
+
+/* KALP YAĞMURU */
+setInterval(()=>{
+  let heart = document.createElement("div");
+  heart.className="heart";
+  heart.innerHTML="💖";
+  heart.style.left=Math.random()*100+"%";
+  heart.style.animationDuration=(Math.random()*3+2)+"s";
+  document.body.appendChild(heart);
+
+  setTimeout(()=>heart.remove(),5000);
+},300);
 </script>
 
 </body>

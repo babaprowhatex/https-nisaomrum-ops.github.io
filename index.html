@@ -12,7 +12,6 @@ body {
   font-family: Arial;
 }
 
-/* ARKA PLAN */
 .bg {
   position:fixed;
   width:100%;
@@ -21,53 +20,60 @@ body {
   z-index:-1;
 }
 
-/* PLAYER (FULL ŞEFFAF) */
+/* PLAYER */
 .player {
   position:absolute;
   top:50%;
   left:50%;
   transform:translate(-50%,-50%);
-  padding:20px;
+  padding:15px;
   border-radius:25px;
   text-align:center;
-  background:rgba(0,0,0,0); /* TAM ŞEFFAF */
+  background:rgba(0,0,0,0);
 }
 
 /* FOTO */
 .cover {
-  width:140px;
-  height:140px;
+  width:130px;
+  height:130px;
   border-radius:20px;
   object-fit:cover;
 }
 
-/* BUTONLAR */
+/* BUTON */
 button {
-  margin:10px;
-  padding:12px;
+  margin:8px;
+  padding:10px;
   border:none;
   border-radius:50%;
   background:linear-gradient(45deg,#ff4da6,#ff80bf);
   color:white;
-  font-size:16px;
+  font-size:14px;
   cursor:pointer;
 }
 
 /* BAR */
 input[type=range] {
-  width:200px;
+  width:180px;
+  height:4px;
 }
 
-/* MOBİL KÜÇÜLTME */
+/* İMLEÇ KÜÇÜK */
+input[type=range]::-webkit-slider-thumb {
+  width:10px;
+  height:10px;
+}
+
+/* MOBİL */
 @media (max-width:600px){
-  .cover{width:110px;height:110px;}
-  input[type=range]{width:150px;}
+  .cover{width:90px;height:90px;}
+  input[type=range]{width:120px;}
+  button{padding:8px;font-size:12px;}
 }
 
 /* KALPLER */
 .heart {
   position:fixed;
-  color:pink;
   animation:fall linear infinite;
 }
 @keyframes fall {
@@ -82,9 +88,9 @@ input[type=range] {
 <img src="foto.jpg" class="bg">
 
 <div class="player">
-  <img src="cover.jpg" class="cover">
+  <img id="cover" src="cover1.jpg" class="cover">
 
-  <h2 id="title">Şarkı 1</h2>
+  <h3 id="title">Şarkı 1</h3>
 
   <div>
     <button onclick="prev()">⏮</button>
@@ -108,9 +114,9 @@ input[type=range] {
 
 <script>
 const songs = [
-  {name:"Şarkı 1", file:"sarki1.mp3"},
-  {name:"Şarkı 2", file:"sarki2.mp3"},
-  {name:"Şarkı 3", file:"sarki3.mp3"}
+  {name:"Şarkı 1", file:"sarki1.mp3", cover:"cover1.jpg"},
+  {name:"Şarkı 2", file:"sarki2.mp3", cover:"cover2.jpg"},
+  {name:"Şarkı 3", file:"sarki3.mp3", cover:"cover3.jpg"}
 ];
 
 let index = 0;
@@ -119,6 +125,7 @@ const audio = document.getElementById("audio");
 function load(){
   audio.src = songs[index].file;
   document.getElementById("title").innerText = songs[index].name;
+  document.getElementById("cover").src = songs[index].cover;
 }
 load();
 
@@ -135,7 +142,7 @@ function prev(){
   load(); play();
 }
 
-/* İLERLEME */
+/* PROGRESS */
 audio.addEventListener("timeupdate", ()=>{
   const progress = document.getElementById("progress");
   progress.value = (audio.currentTime/audio.duration)*100 || 0;
@@ -151,12 +158,11 @@ document.getElementById("progress").oninput = function(){
   audio.currentTime = (this.value/100)*audio.duration;
 };
 
-/* SES */
+/* VOLUME */
 document.getElementById("volume").oninput = function(){
   audio.volume = this.value;
 };
 
-/* SÜRE FORMAT */
 function format(s){
   if(!s) return "0:00";
   let m = Math.floor(s/60);
@@ -164,7 +170,7 @@ function format(s){
   return m+":"+(sec<10?"0":"")+sec;
 }
 
-/* KALP YAĞMURU */
+/* KALPLER */
 setInterval(()=>{
   let heart = document.createElement("div");
   heart.className="heart";
